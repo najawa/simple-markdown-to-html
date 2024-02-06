@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Markdown to HTML</title>
+</head>
+<body>
+
+  <div id="frame"></div>
+
+
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.2/markdown-it.min.js"></script>
+  <script type="text/javascript">
+    fetch('input.md') // Adjust it with your routes
+  .then(response => {
+    // Check if response is ok
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    return response.text();
+  })
+  .then(mdContent => {
+     // Regular expression to match plain URLs
+    const urlRegex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/ig;
+
+    // Convert plain URLs to Markdown
+    mdContent = mdContent.replace(urlRegex, '[$1]($1)');
+    
+    // Use markdown-it to convert your HTML
+    const markdownIt = window.markdownit();
+    const htmlContent = markdownIt.render(mdContent);
+
+    const divElement = document.getElementById('frame');
+    divElement.innerHTML = htmlContent;
+  })
+  .catch(e => {
+    console.error('Error fetching Markdown file:', e);
+  });
+  </script>
+
+</body>
+</html>
